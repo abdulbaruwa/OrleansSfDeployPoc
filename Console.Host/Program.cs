@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
+using Orleans.Serialization.ProtobufNet;
 using static System.Console;
 
 namespace Console.Host
@@ -40,6 +41,7 @@ namespace Console.Host
                     options.ServiceId = "crm";
                 })
                 .Configure<EndpointOptions>(options => options.AdvertisedIPAddress = IPAddress.Loopback)
+                .Configure<SerializationProviderOptions>(options => options.SerializationProviders.Add(typeof(ProtobufNetSerializer)))
                 .ConfigureApplicationParts(parts =>
                 {
                     parts.AddApplicationPart(typeof(AccountGrain).Assembly).WithReferences();

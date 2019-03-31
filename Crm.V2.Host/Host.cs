@@ -9,6 +9,7 @@ using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
 using Orleans.Hosting.ServiceFabric;
+using Orleans.Serialization.ProtobufNet;
 
 namespace Crm.V2.Host
 {
@@ -50,6 +51,8 @@ namespace Crm.V2.Host
                 {
                     logging.AddDebug();
                 });
+
+                builder.Configure<SerializationProviderOptions>(options => options.SerializationProviders.Add(typeof(ProtobufNetSerializer)));
 
                 builder.UseDashboard(options =>
                 {

@@ -7,8 +7,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Orleans.EventSourcing" Version="2.3.0" />
-    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="2.3.0"/>
+    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="2.3.0" />
     <PackageReference Include="Microsoft.Orleans.OrleansAzureUtils" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Orleans.ProtobufNet" Version="2.3.0" />
     
   </ItemGroup>
 

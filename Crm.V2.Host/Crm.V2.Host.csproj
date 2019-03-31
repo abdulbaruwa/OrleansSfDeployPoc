@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.Orleans.OrleansAzureUtils" Version="2.3.0" />
     <PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="2.3.0" />
     <PackageReference Include="Microsoft.Orleans.Runtime.Legacy" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Orleans.ProtobufNet" Version="2.3.0" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.2.187" />
     <PackageReference Include="OrleansDashboard" Version="2.3.1" />
   </ItemGroup>
