@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Crm.V2.Implementations
+﻿namespace Crm.V2.Implementations
 {
     public class Class1
     {

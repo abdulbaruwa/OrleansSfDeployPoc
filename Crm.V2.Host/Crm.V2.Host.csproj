@@ -7,6 +7,7 @@
     <ServerGarbageCollection>True</ServerGarbageCollection>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +25,7 @@
     <PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="2.3.0" />
     <PackageReference Include="Microsoft.Orleans.Runtime.Legacy" Version="2.3.0" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.2.187" />
-    <PackageReference Include="OrleansDashboard" Version="2.1.3" />
+    <PackageReference Include="OrleansDashboard" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,11 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Fabric;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using Crm.V2.Implementations;
+using Crm.V2.Interfaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Orleans;
+using Orleans.Configuration;
+using Orleans.Hosting;
+using Orleans.Hosting.ServiceFabric;
 
 namespace Crm.V2.Host
 {
@@ -24,28 +27,59 @@ namespace Crm.V2.Host
         /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
-            return new ServiceInstanceListener[0];
-        }
-
-        /// <summary>
-        /// This is the main entry point for your service instance.
-        /// </summary>
-        /// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service instance.</param>
-        protected override async Task RunAsync(CancellationToken cancellationToken)
-        {
-            // TODO: Replace the following sample code with your own logic 
-            //       or remove this RunAsync override if it's not needed in your service.
-
-            long iterations = 0;
-
-            while (true)
+            var listener = OrleansServiceListener.CreateStateless((sfContext, builder) =>
             {
-                cancellationToken.ThrowIfCancellationRequested();
+                builder.Configure<ClusterOptions>(options =>
+                {
+                    // The service id will be unique for the entire service's lifetime. It is used to identify persistent state for reminders and grain state.
+                    options.ServiceId = sfContext.ServiceName.ToString();
 
-                ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
+                    // ClusterId identifies a deployed cluster. Used to Identify which silos belong to a particular cluster
+                    options.ClusterId = "dev";
+                });
 
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
-            }
+                builder.AddAzureTableGrainStorage("GloballySharedAzureAccount",
+                    options => options.ConnectionString = "UseDevelopmentStorage=true");
+
+                // Configure Azure storage as the clustering provider. Could use sql in the future.
+                builder.UseAzureStorageClustering(
+                    options => options.ConnectionString = "UseDevelopmentStorage=true");
+
+                // configure logging
+                builder.ConfigureLogging(logging =>
+                {
+                    logging.AddDebug();
+                });
+
+                builder.UseDashboard(options =>
+                {
+                    options.Port = 8082;
+                    options.Host = "*";
+                    options.HostSelf = true;
+                });
+
+                // As SF manages port allocation, use the ports defined.
+                var activation = sfContext.CodePackageActivationContext;
+                var endpoints = activation.GetEndpoints();
+
+                // These endpoint names correspond to TCP endpoints specified in the manifest.
+                var siloEndpoint = endpoints["OrleansSiloEndpoint"];
+                var gatewayEndpoint = endpoints["OrleansProxyEndpoint"];
+                var hostname = sfContext.NodeContext.IPAddressOrFQDN;
+                builder.ConfigureEndpoints(hostname, siloEndpoint.Port, gatewayEndpoint.Port);
+
+                // Add grain assemblies
+                builder.ConfigureApplicationParts(parts =>
+                {
+                    parts.AddApplicationPart(typeof(IAccountGrain).Assembly).WithReferences();
+
+                    // Alternative: Add all loadable assemblies in the current base path.
+                    // tldr:; Seem to need to do this if loading OrleansDashboard. As it seems to break "AddApplicationPart" . 
+                    parts.AddFromApplicationBaseDirectory();
+                });
+            });
+
+            return new[] { listener };
         }
     }
 }
