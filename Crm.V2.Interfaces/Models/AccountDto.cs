@@ -9,5 +9,6 @@ namespace Crm.V2.Interfaces.Models
         public string Iban { get; set; }
         public List<Guid> Transactions { get; set; }
         public Guid AccountId { get; set; }
+        public string Bban { get; set; }
     }
 }

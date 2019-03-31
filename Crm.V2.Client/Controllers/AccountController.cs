@@ -13,6 +13,7 @@ namespace Crm.V2.Client.Controllers
         public string Name { get; set; }
         public string Iban { get; set; }
         public Guid AccountId { get; set; }
+        public string Bban { get; set; }
     }
 
     [Produces("application/json")]
@@ -41,7 +42,7 @@ namespace Crm.V2.Client.Controllers
         {
             var accountActor = _clusterClient.GetGrain<IAccountGrain>(value.AccountId);
             var @event = new NewAccountEvent<NewAccount>(value.AccountId, "New Account", DateTime.UtcNow,
-                new NewAccount(value.AccountId, value.Name, value.Iban));
+                new NewAccount(value.AccountId, value.Name, value.Iban, value.Bban));
             await accountActor.NewAsync(@event);
         }
 
@@ -55,7 +56,7 @@ namespace Crm.V2.Client.Controllers
                 var accountId = Guid.NewGuid();
                 var accountActor = _clusterClient.GetGrain<IAccountGrain>(accountId);
                 var @event = new NewAccountEvent<NewAccount>(accountId, "New Account", DateTime.UtcNow,
-                    new NewAccount(accountId, Guid.NewGuid().ToString(), Guid.NewGuid().ToString()));
+                    new NewAccount(accountId, Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString()));
                 await accountActor.NewAsync(@event);
                 accounts.Add(accountId.ToString());
             }

@@ -49,6 +49,7 @@ namespace Crm.V2.Interfaces
         public List<DomainEvent<IDomainEventEntity>> Changes { get; }
         public string Name { get; private set; }
         public string Iban { get; private set; }
+        public string Bban { get; private set; }
         public HashSet<Guid> Transactions { get; }
         public Guid AccountId { get; set; }
 
@@ -65,6 +66,7 @@ namespace Crm.V2.Interfaces
                 AccountId = eventBody.AccountId;
                 Name = eventBody.Name;
                 Iban = eventBody.Iban;
+                Bban = eventBody.Bban;
             }
         }
 
@@ -84,6 +86,7 @@ namespace Crm.V2.Interfaces
             {
                 Transactions = Transactions.ToList(),
                 Iban = Iban,
+                Bban = Bban,
                 AccountId = AccountId,
                 Name = Name
             };
@@ -104,15 +107,17 @@ namespace Crm.V2.Interfaces
     [Immutable]
     public class NewAccount : IDomainEventEntity
     {
-        public NewAccount(Guid accountId, string name, string iban)
+        public NewAccount(Guid accountId, string name, string iban, string bban)
         {
             Name = name;
             Iban = iban;
+            Bban = bban;
             AccountId = accountId;
         }
 
         public string Name { get; }
         public string Iban { get; }
+        public string Bban { get; }
         public Guid AccountId { get; }
     }
 }
